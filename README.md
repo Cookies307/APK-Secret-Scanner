@@ -39,7 +39,7 @@ No additional PowerShell modules are required.
 Clone the repository:
 
 ```powershell
-git clone https://github.com/YOUR-USERNAME/APK-Secret-Scanner.git
+git clone https://github.com/Cookies307/APK-Secret-Scanner.git
 ```
 
 Navigate to the project directory:
