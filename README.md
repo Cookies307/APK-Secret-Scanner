@@ -53,13 +53,13 @@ cd APK-Secret-Scanner
 ### 1. Scan a decompiled APK directory
 
 ```powershell
-.\Scan-APKSecrets.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
+.\APK-Secret-Scanner.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
 ```
 
 ### 2. Specify a custom report location
 
 ```powershell
-.\Scan-APKSecrets.ps1 `
+.\APK-Secret-Scanner.ps1 `
     -InputPath "PATH_TO_DECOMPILED_OUTPUT" `
     -OutputPath ".\reports\scan-report.md"
 ```
@@ -69,7 +69,7 @@ The output directory is created automatically if it does not exist.
 ### 3. Scan Apktool output
 
 ```powershell
-.\Scan-APKSecrets.ps1 `
+.\APK-Secret-Scanner.ps1 `
     -InputPath "C:\Pentest\Apktool_Output" `
     -OutputPath ".\reports\apktool-report.md"
 ```
@@ -77,7 +77,7 @@ The output directory is created automatically if it does not exist.
 ### 4. Scan JADX output
 
 ```powershell
-.\Scan-APKSecrets.ps1 `
+.\APK-Secret-Scanner.ps1 `
     -InputPath "C:\Pentest\JADX_Output" `
     -OutputPath ".\reports\jadx-report.md"
 ```
@@ -87,7 +87,7 @@ The output directory is created automatically if it does not exist.
 If PowerShell blocks script execution, use:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scan-APKSecrets.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\APK-Secret-Scanner.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
 ```
 
 ## Detection Patterns
