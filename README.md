@@ -1,209 +1,69 @@
 # APK Secret Scanner
 
-A lightweight PowerShell tool for scanning decompiled Android applications for potential hardcoded secrets and insecure endpoints.
-
-APK Secret Scanner performs recursive pattern matching against common indicators of exposed credentials, API keys, private keys, database connection strings, Bearer tokens, Firebase URLs, and HTTP endpoints.
-
-It generates a structured Markdown report to make manual security review easier.
+A lightweight PowerShell tool for scanning decompiled Android applications (JADX / Apktool output) for potential hardcoded secrets and sensitive information.
 
 ## Features
 
-- Recursive scanning of decompiled Android application files.
-- Supports common JADX and Apktool output directories.
-- Detects potential:
-  - Firebase database URLs
-  - AWS Access Key IDs
-  - RSA, EC, and OpenSSH private key headers
-  - MongoDB connection strings
-  - JDBC connection strings
-  - API key references
-  - Secret key references
-  - Bearer tokens
-  - HTTP URLs
-- Categorizes matches by detection pattern.
-- Displays file paths and line numbers.
-- Includes matched values and source-line context.
-- Generates a structured Markdown report.
-- Runs locally without uploading application files or scan results.
+- Detects potential API keys, passwords, tokens, private keys, and database connection strings.
+- Identifies Firebase URLs, AWS keys, GitHub tokens, and insecure HTTP endpoints.
+- Flags sensitive files such as `.env`, keystores, and `google-services.json`.
+- Filters common placeholders and low-entropy values.
+- Supports Markdown, JSON, and CSV reports.
+- Severity-based filtering and optional redaction.
+- Runs locally without uploading scan data.
 
 ## Requirements
 
-- Windows 10 or later.
-- Windows PowerShell 5.1 or PowerShell 7+.
-- Decompiled Android application output from JADX or Apktool.
+- Windows with PowerShell.
+- Decompiled APK output from JADX or Apktool.
+- No additional PowerShell modules required.
 
-No additional PowerShell modules are required.
-
-## Installation
+## Usage
 
 Clone the repository:
 
 ```powershell
 git clone https://github.com/Cookies307/APK-Secret-Scanner.git
-```
-
-Navigate to the project directory:
-
-```powershell
 cd APK-Secret-Scanner
 ```
 
-## Usage
-
-### 1. Scan a decompiled APK directory
+Run a scan:
 
 ```powershell
-.\APK-Secret-Scanner.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
+.\APK-Secret-Scanner.ps1 -InputPath ".\app-jadx" -ApkPath ".\app.apk"
 ```
 
-### 2. Specify a custom report location
+Generate multiple report formats:
 
 ```powershell
 .\APK-Secret-Scanner.ps1 `
-    -InputPath "PATH_TO_DECOMPILED_OUTPUT" `
-    -OutputPath ".\reports\scan-report.md"
+    -InputPath ".\app-jadx" `
+    -ApkPath ".\app.apk" `
+    -Format Markdown,Json,Csv
 ```
 
-The output directory is created automatically if it does not exist.
+## Options
 
-### 3. Scan Apktool output
-
-```powershell
-.\APK-Secret-Scanner.ps1 `
-    -InputPath "C:\Pentest\Apktool_Output" `
-    -OutputPath ".\reports\apktool-report.md"
-```
-
-### 4. Scan JADX output
-
-```powershell
-.\APK-Secret-Scanner.ps1 `
-    -InputPath "C:\Pentest\JADX_Output" `
-    -OutputPath ".\reports\jadx-report.md"
-```
-
-### 5. Execution Policy
-
-If PowerShell blocks script execution, use:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\APK-Secret-Scanner.ps1 -InputPath "PATH_TO_DECOMPILED_OUTPUT"
-```
-
-## Detection Patterns
-
-| Category | Detection Pattern |
+| Parameter | Description |
 |---|---|
-| Firebase URLs | `firebaseio.com` |
-| AWS Access Keys | `AKIA` followed by 16 uppercase alphanumeric characters |
-| Private Keys | RSA, EC, and OpenSSH private key headers |
-| MongoDB Connections | `mongodb://` |
-| JDBC Connections | `jdbc:` |
-| API Key References | `apikey`, `api.key` |
-| Secret Key References | `secretkey`, `secret.key` |
-| Bearer Tokens | `Bearer` followed by an alphanumeric value |
-| HTTP URLs | `http://` |
+| `-InputPath` | Decompiled APK directory (required). |
+| `-ApkPath` | Original APK path (required; used for report naming). |
+| `-OutputPath` | Custom report output path. |
+| `-Format` | Markdown, Json, or Csv. |
+| `-MinSeverity` | Filter findings by severity. |
+| `-Redact` | Partially masks matched values in reports. |
+| `-SkipLibraries` | Skips common third-party libraries. |
+| `-ExcludeDir` | Excludes specific directories or files. |
+| `-MaxFileSizeMB` | Maximum file size to scan (default: 5 MB). |
 
-## Output
+## Important Notes
 
-The scanner generates a Markdown report containing:
-
-- Scan summary.
-- Number of scanned files.
-- Total matches.
-- Results grouped by category.
-- File paths.
-- Line numbers.
-- Matched values.
-- Source-line context.
-
-Open the generated `.md` file in VS Code or any Markdown viewer.
-
-## Example Report Structure
-
-```text
-APK Secret Scanner Report
-
-Scan Summary
-    Scan Date
-    Scanned Directory
-    Files Scanned
-    Total Matches
-
-Results by Category
-    Firebase URLs
-    AWS Access Key IDs
-    Private Key Headers
-    MongoDB Connections
-    JDBC Connections
-    API Key References
-    Secret Key References
-    Bearer Tokens
-    HTTP URLs
-
-Detailed Results
-    File Path
-    Line Number
-    Matched Value
-    Context
-```
-
-## How to Interpret Results
-
-**Important: A match is an investigation lead, not a confirmed security vulnerability.**
-
-Manually validate each result before reporting it.
-
-| Detection | What to Verify |
-|---|---|
-| Firebase URL | Database exposure and access permissions |
-| AWS Access Key ID | Whether a genuine credential is exposed and its permissions |
-| Private Key Header | Whether a complete private key is present |
-| MongoDB URI | Whether credentials or sensitive connection details are exposed |
-| JDBC URI | Whether database connection information is exposed |
-| API Key Reference | Whether an actual sensitive key is hardcoded |
-| Secret Key Reference | Whether the value is a genuine secret |
-| Bearer Token | Whether the token is genuine, valid, and sensitive |
-| HTTP URL | Whether sensitive communication occurs without appropriate transport protection |
-
-## Limitations
-
-- Static pattern matching only.
-- Does not validate credentials or tokens.
-- Does not test remote endpoints.
-- Does not determine whether detected values are active or exploitable.
-- May produce false positives.
-- Scans supported text-file extensions; binary assets are not analyzed.
-- HTTP URLs are informational matches and are not automatically vulnerabilities.
-
-Additional manual analysis and authorized security testing are required to verify potential findings.
-
-## Security and Privacy
-
-The scanner runs locally on the user's machine.
-
-It does not upload APK files, source code, credentials, or generated reports to external services.
-
-Generated reports may contain sensitive information. Review and sanitize reports before sharing them or publishing them.
-
-## Responsible Use
-
-Use this tool only on applications you own or have explicit authorization to assess.
-
-This project is intended to support authorized Android application security testing and research.
-
-## Contributing
-
-Contributions are welcome!
-
-You can contribute by:
-
-- Suggesting additional detection patterns.
-- Improving report formatting.
-- Reducing false positives.
-- Improving PowerShell compatibility.
-- Reporting bugs or proposing enhancements through GitHub Issues.
+- A match is an investigation lead, not a confirmed vulnerability.
+- Results require manual validation.
+- The scanner does not validate credentials or test remote endpoints.
+- Redaction only masks matched values; context and filenames may still contain sensitive information. Review reports before sharing.
+- Use only on applications you own or are authorized to assess.
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+MIT License
