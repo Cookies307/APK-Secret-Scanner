@@ -33,7 +33,7 @@ Run a scan:
 .\APK-Secret-Scanner.ps1 -InputPath ".\app-jadx" -ApkPath ".\app.apk"
 ```
 
-Generate multiple report formats:
+Generate Markdown report:
 
 ```
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\APK-Secret-Scanner.ps1" -InputPath ".\app-jadx" -ApkPath ".\app.apk" -Format Markdown
