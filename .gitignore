@@ -1,0 +1,18 @@
+
+# Generated scan reports
+reports/
+APK-Secret-Scan-*.md
+*.report.md
+
+# APK files
+*.apk
+*.aab
+
+# Decompiled application outputs
+Apktool_Output/
+JADX_Output/
+output/
+
+# Temporary files
+*.tmp
+*.log
